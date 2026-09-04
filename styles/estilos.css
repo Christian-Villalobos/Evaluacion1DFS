@@ -1,0 +1,18 @@
+:root,
+html,
+[data-theme="light"],
+[data-theme="dark"] {
+  --bulma-primary-h: 43deg;
+  --bulma-primary-s: 74%;
+  --bulma-primary-l: 49%; /* Un tono dorado/miel */
+  
+  /* Aprovechamos de cambiar también el fondo global mediante las variables de Bulma */
+  --bulma-body-background-color: #121212;
+  --bulma-body-color: #e0e0e0;
+}
+
+/* Forzamos el color del body por si Bulma intenta sobrescribirlo a nivel de etiqueta */
+body {
+  background-color: #121212 !important;
+  color: #e0e0e0 !important;
+}

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio de Sesión</title>
+    <!-- Acordarse de verificar las rutas correctamente '../' -->
+    <link rel="stylesheet" href="../styles/bulma.css">
+    <link rel="stylesheet" href="../styles/estilos.css">
+</head>
+
+<body>
+
+    <header class="section has-background-dark">
+        <!-- Enlace que envuelve a la imagen para ir al inicio -->
+        <div class="is-right mb-4">
+            <a href="../index.html">
+                <figure class="image is-128x128 is-inline-block">
+                    <img src="/images/avceb1aju.webp" alt="Path of Exile Logo">
+                </figure>
+            </a>
+        </div>
+        <h1 class="title has-text-warning has-text-centered">
+            PATH OF EXILE CURRENCY
+        </h1>
+
+    </header>
+
+    <main class="container mt-6">
+        <div class="columns is-centered">
+            <div class="column is-one-third">
+                <!-- 'box' sirve para dar un fondo, sombra y borde redondeado ideal para formularios de login -->
+                <form class="box">
+                    <div class="field">
+                        <label class="label">Correo Electrónico</label>
+                        <div class="control">
+                            <input class="input" type="email" name="email" placeholder="Ingrese su correo electrónico"
+                                required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Contraseña</label>
+                        <div class="control">
+                            <input class="input" type="password" name="password" placeholder="Ingrese su contraseña"
+                                required>
+                        </div>
+                    </div>
+                    <div class="field is-grouped is-grouped-centered mt-4">
+                        <div class="control">
+                            <button type="submit" class="button is-primary">Iniciar Sesión</button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer mt-6 has-background-dark">
+        <div class="content has-text-centered">
+            <p>&copy; 2024 Path of Exile Currency. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+</body>
+
+</html>
