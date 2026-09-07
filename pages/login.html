@@ -31,20 +31,26 @@
         <div class="columns is-centered">
             <div class="column is-one-third">
                 <!-- 'box' sirve para dar un fondo, sombra y borde redondeado ideal para formularios de login -->
-                <form class="box">
+                <form id="formLogin" class="box" novalidate>
                     <div class="field">
-                        <label class="label">Correo Electrónico</label>
+                        <label class="label" for="loginEmail">Correo Electrónico</label>
                         <div class="control">
-                            <input class="input" type="email" name="email" placeholder="Ingrese su correo electrónico"
-                                required>
+                            <input class="input" type="email" id="loginEmail" name="email"
+                                placeholder="Ingrese su correo electrónico" autocomplete="email">
                         </div>
+                        <p class="help is-danger is-hidden" id="err-login-email">
+                            Ingrese un formato de correo electrónico válido.
+                        </p>
                     </div>
                     <div class="field">
-                        <label class="label">Contraseña</label>
+                        <label class="label" for="loginPassword">Contraseña</label>
                         <div class="control">
-                            <input class="input" type="password" name="password" placeholder="Ingrese su contraseña"
-                                required>
+                            <input class="input" type="password" id="loginPassword" name="password"
+                                placeholder="Ingrese su contraseña" autocomplete="current-password">
                         </div>
+                        <p class="help is-danger is-hidden" id="err-login-password">
+                            La contraseña no puede estar vacía y debe tener al menos 6 caracteres.
+                        </p>
                     </div>
                     <div class="field is-grouped is-grouped-centered mt-4">
                         <div class="control">
@@ -62,6 +68,8 @@
             <p>&copy; 2024 Path of Exile Currency. Todos los derechos reservados.</p>
         </div>
     </footer>
+
+    <script src="/scripts/scripts.js"></script>
 </body>
 
 </html>
