@@ -113,13 +113,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Si ambos campos cumplen los criterios
             if (emailCorrecto && passCorrecto) {
-                alert('¡Inicio de sesión exitoso! Redirigiendo al mercado...');
+                alert('¡Inicio de sesión exitoso! Redirigiendo al perfil...');
                 loginForm.reset();
                 inputEmail.classList.remove('is-success');
                 inputPass.classList.remove('is-success');
                 
                 // Redirección al catálogo principal
-                window.location.href = '../index.html';
+                window.location.href = '../pages/profile.html';
             }
         });
     }
