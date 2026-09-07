@@ -55,3 +55,72 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    
+    const loginForm = document.getElementById('formLogin');
+
+    // Solo se ejecuta si estamos en la página de login
+    if (loginForm) {
+        const inputEmail = document.getElementById('loginEmail');
+        const inputPass = document.getElementById('loginPassword');
+
+        // Expresión regular para validar formato estándar de correo
+        const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        // Función modular para alternar clases de Bulma y mensajes
+        function validarControl(input, esValido, idError) {
+            const errorElemento = document.getElementById(idError);
+            if (esValido) {
+                input.classList.remove('is-danger');
+                input.classList.add('is-success');
+                errorElemento.classList.add('is-hidden');
+                return true;
+            } else {
+                input.classList.remove('is-success');
+                input.classList.add('is-danger');
+                errorElemento.classList.remove('is-hidden');
+                return false;
+            }
+        }
+
+        // Validación en tiempo real mientras el usuario escribe
+        inputEmail.addEventListener('input', () => {
+            const emailValido = regexEmail.test(inputEmail.value.trim());
+            validarControl(inputEmail, emailValido, 'err-login-email');
+        });
+
+        inputPass.addEventListener('input', () => {
+            const passValido = inputPass.value.trim().length >= 6;
+            validarControl(inputPass, passValido, 'err-login-password');
+        });
+
+        // Validación al presionar el botón de inicio de sesión
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault(); // Detiene el envío nativo del navegador
+
+            const emailCorrecto = validarControl(
+                inputEmail,
+                regexEmail.test(inputEmail.value.trim()),
+                'err-login-email'
+            );
+
+            const passCorrecto = validarControl(
+                inputPass,
+                inputPass.value.trim().length >= 6,
+                'err-login-password'
+            );
+
+            // Si ambos campos cumplen los criterios
+            if (emailCorrecto && passCorrecto) {
+                alert('¡Inicio de sesión exitoso! Redirigiendo al mercado...');
+                loginForm.reset();
+                inputEmail.classList.remove('is-success');
+                inputPass.classList.remove('is-success');
+                
+                // Redirección al catálogo principal
+                window.location.href = '../index.html';
+            }
+        });
+    }
+});
