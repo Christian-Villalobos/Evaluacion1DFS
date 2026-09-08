@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 inputPass.classList.remove('is-success');
                 
                 // Redirección al catálogo principal
-                window.location.href = 'pages/profile.html';
+                window.location.href = '../pages/profile.html';
             }
         });
     }
