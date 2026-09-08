@@ -1,126 +1,114 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('formRegistro');
-    if (!form) return;
+const STORAGE_KEY = "poe_users";
 
-    const inputUser = document.getElementById('username');
-    const inputEmail = document.getElementById('email');
-    const inputPass = document.getElementById('password');
-
-    // Expresiones regulares para validar
-    const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const regexUser = /^[a-zA-Z0-9]{4,15}$/;
-    const regexPass = /^(?=.*\d).{6,}$/; // Al menos 6 caracteres y 1 número
-
-    function validarCampo(input, condicionValida, idError) {
-        const errorP = document.getElementById(idError);
-        if (condicionValida) {
-            input.classList.remove('is-danger');
-            input.classList.add('is-success');
-            errorP.classList.add('is-hidden');
-            return true;
-        } else {
-            input.classList.remove('is-success');
-            input.classList.add('is-danger'); // Activa borde rojo de Bulma
-            errorP.classList.remove('is-hidden'); // Muestra mensaje
-            return false;
-        }
-    }
-
-    // Validación en tiempo real (evento input)
-    inputUser.addEventListener('input', () => {
-        validarCampo(inputUser, regexUser.test(inputUser.value.trim()), 'err-username');
-    });
-
-    inputEmail.addEventListener('input', () => {
-        validarCampo(inputEmail, regexEmail.test(inputEmail.value.trim()), 'err-email');
-    });
-
-    inputPass.addEventListener('input', () => {
-        validarCampo(inputPass, regexPass.test(inputPass.value), 'err-password');
-    });
-
-    // Validación al enviar
-    form.addEventListener('submit', (e) => {
-        e.preventDefault(); // Previene envío si hay errores
-        const uValido = validarCampo(inputUser, regexUser.test(inputUser.value.trim()), 'err-username');
-        const eValido = validarCampo(inputEmail, regexEmail.test(inputEmail.value.trim()), 'err-email');
-        const pValido = validarCampo(inputPass, regexPass.test(inputPass.value), 'err-password');
-
-        if (uValido && eValido && pValido) {
-            alert('¡Registro exitoso! Bienvenido al mercado.');
-            form.reset();
-            inputUser.classList.remove('is-success');
-            inputEmail.classList.remove('is-success');
-            inputPass.classList.remove('is-success');
-        }
-    });
-});
+// Usuario Admin creado por defecto
+let users = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
+  { 
+    name: "Administrador", 
+    email: "admin@poe.com", 
+    password: "admin123", 
+    role: "admin" 
+  }
+];
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    const loginForm = document.getElementById('formLogin');
+    // --- 1. REGISTRO (register.html) ---
+    const formRegistro = document.getElementById('formRegistro');
+    if (formRegistro) {
+        formRegistro.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim().toLowerCase();
+            const password = document.getElementById('password').value;
 
-    // Solo se ejecuta si estamos en la página de login
-    if (loginForm) {
-        const inputEmail = document.getElementById('loginEmail');
-        const inputPass = document.getElementById('loginPassword');
-
-        // Expresión regular para validar formato estándar de correo
-        const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        // Función modular para alternar clases de Bulma y mensajes
-        function validarControl(input, esValido, idError) {
-            const errorElemento = document.getElementById(idError);
-            if (esValido) {
-                input.classList.remove('is-danger');
-                input.classList.add('is-success');
-                errorElemento.classList.add('is-hidden');
-                return true;
-            } else {
-                input.classList.remove('is-success');
-                input.classList.add('is-danger');
-                errorElemento.classList.remove('is-hidden');
-                return false;
+            const existe = users.some(u => u.email === email);
+            if (existe) {
+                alert('El correo ya está registrado.');
+                return;
             }
+
+            // Los usuarios registrados por formulario serán de rol "user"
+            users.push({ 
+                name: username, 
+                email: email, 
+                password: password, 
+                role: "user" 
+            });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+
+            alert('¡Registro exitoso! Redirigiendo a inicio de sesión...');
+            window.location.href = 'login.html';
+        });
+    }
+
+    // --- 2. LOGIN (login.html) ---
+    const formLogin = document.getElementById('formLogin');
+    if (formLogin) {
+        formLogin.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const password = document.getElementById('loginPassword').value;
+
+            const usuarioValido = users.find(u => u.email === email && u.password === password);
+
+            if (usuarioValido) {
+                // Guardar la sesión
+                localStorage.setItem("poe_current_user", JSON.stringify(usuarioValido));
+                alert('¡Bienvenido ' + usuarioValido.name + '!');
+
+                // Si es ADMIN redirige al panel de administración, si no al perfil normal
+                if (usuarioValido.role === 'admin') {
+                    window.location.href = 'admin.html';
+                } else {
+                    window.location.href = 'profile.html';
+                }
+            } else {
+                alert('Correo o contraseña incorrectos.');
+            }
+        });
+    }
+
+    // --- 3. PERFIL (profile.html) ---
+    const userNameElem = document.getElementById('user-name');
+    if (userNameElem) {
+        const currentUser = JSON.parse(localStorage.getItem("poe_current_user"));
+
+        if (!currentUser) {
+            window.location.href = 'login.html';
+        } else {
+            userNameElem.textContent = currentUser.name;
+            document.getElementById('user-email').textContent = currentUser.email;
         }
 
-        // Validación en tiempo real mientras el usuario escribe
-        inputEmail.addEventListener('input', () => {
-            const emailValido = regexEmail.test(inputEmail.value.trim());
-            validarControl(inputEmail, emailValido, 'err-login-email');
-        });
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                localStorage.removeItem("poe_current_user");
+                window.location.href = 'login.html';
+            });
+        }
+    }
 
-        inputPass.addEventListener('input', () => {
-            const passValido = inputPass.value.trim().length >= 6;
-            validarControl(inputPass, passValido, 'err-login-password');
-        });
+    // --- 4. PANEL DE ADMINISTRADOR (admin.html) ---
+    const adminContainer = document.getElementById('admin-content');
+    if (adminContainer) {
+        const currentUser = JSON.parse(localStorage.getItem("poe_current_user"));
 
-        // Validación al presionar el botón de inicio de sesión
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault(); // Detiene el envío nativo del navegador
+        // Seguridad: Si no hay usuario o NO es admin, lo expulsamos al login
+        if (!currentUser || currentUser.role !== 'admin') {
+            alert('Acceso restringido solo para administradores.');
+            window.location.href = 'login.html';
+        }
 
-            const emailCorrecto = validarControl(
-                inputEmail,
-                regexEmail.test(inputEmail.value.trim()),
-                'err-login-email'
-            );
-
-            const passCorrecto = validarControl(
-                inputPass,
-                inputPass.value.trim().length >= 6,
-                'err-login-password'
-            );
-
-            // Si ambos campos cumplen los criterios
-            if (emailCorrecto && passCorrecto) {
-                alert('¡Inicio de sesión exitoso! Redirigiendo al perfil...');
-                loginForm.reset();
-                inputEmail.classList.remove('is-success');
-                inputPass.classList.remove('is-success');
-                
-                // Redirección al catálogo principal
-                window.location.href = '../pages/profile.html';
-            }
-        });
+        // Botón de Cerrar Sesión en Admin
+        const logoutAdmin = document.getElementById('logout-admin');
+        if (logoutAdmin) {
+            logoutAdmin.addEventListener('click', () => {
+                localStorage.removeItem("poe_current_user");
+                window.location.href = 'login.html';
+            });
+        }
     }
 });
