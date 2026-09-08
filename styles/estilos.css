@@ -11,7 +11,7 @@ html,
   --bulma-body-color: #e0e0e0;
 }
 
-/* Forzamos el color del body por si Bulma intenta sobrescribirlo a nivel de etiqueta */
+/* Forzamos el color del body por si Bulma intenta sobrescribirlo */
 body {
   background-color: #121212 !important;
   color: #e0e0e0 !important;
