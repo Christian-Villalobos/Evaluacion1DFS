@@ -1,14 +1,13 @@
 const STORAGE_KEY = "poe_users";
+const CART_KEY = "poe_cart";
 
-// Usuario Admin creado por defecto
+// Cargar usuarios
 let users = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
-  { 
-    name: "Administrador", 
-    email: "admin@poe.com", 
-    password: "admin123", 
-    role: "admin" 
-  }
+  { name: "Administrador", email: "admin@poe.com", password: "admin123", role: "admin" }
 ];
+
+// Cargar carrito desde localStorage
+let carrito = JSON.parse(localStorage.getItem(CART_KEY)) || [];
 
 document.addEventListener('DOMContentLoaded', () => {
     
@@ -28,13 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Los usuarios registrados por formulario serán de rol "user"
-            users.push({ 
-                name: username, 
-                email: email, 
-                password: password, 
-                role: "user" 
-            });
+            users.push({ name: username, email: email, password: password, role: "user" });
             localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
 
             alert('¡Registro exitoso! Redirigiendo a inicio de sesión...');
@@ -54,11 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const usuarioValido = users.find(u => u.email === email && u.password === password);
 
             if (usuarioValido) {
-                // Guardar la sesión
                 localStorage.setItem("poe_current_user", JSON.stringify(usuarioValido));
                 alert('¡Bienvenido ' + usuarioValido.name + '!');
 
-                // Si es ADMIN redirige al panel de administración, si no al perfil normal
                 if (usuarioValido.role === 'admin') {
                     window.location.href = 'admin.html';
                 } else {
@@ -91,24 +82,119 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 4. PANEL DE ADMINISTRADOR (admin.html) ---
-    const adminContainer = document.getElementById('admin-content');
-    if (adminContainer) {
-        const currentUser = JSON.parse(localStorage.getItem("poe_current_user"));
+    // --- 4. TIENDA Y CARRITO (tienda.html) ---
+    const btnVerCarrito = document.getElementById('btn-ver-carrito');
+    if (btnVerCarrito) {
+        const modalCarrito = document.getElementById('modal-carrito');
+        const btnCerrarModal = document.getElementById('btn-cerrar-modal');
+        const btnVaciar = document.getElementById('btn-vaciar');
+        const btnComprar = document.getElementById('btn-comprar');
+        const listaCarrito = document.getElementById('lista-carrito');
+        const cartCount = document.getElementById('cart-count');
+        const cartTotal = document.getElementById('cart-total');
 
-        // Seguridad: Si no hay usuario o NO es admin, lo expulsamos al login
-        if (!currentUser || currentUser.role !== 'admin') {
-            alert('Acceso restringido solo para administradores.');
-            window.location.href = 'login.html';
-        }
+        // Función para actualizar la vista del carrito
+        function actualizarCarritoUI() {
+            // Guardar en localStorage
+            localStorage.setItem(CART_KEY, JSON.stringify(carrito));
 
-        // Botón de Cerrar Sesión en Admin
-        const logoutAdmin = document.getElementById('logout-admin');
-        if (logoutAdmin) {
-            logoutAdmin.addEventListener('click', () => {
-                localStorage.removeItem("poe_current_user");
-                window.location.href = 'login.html';
+            // Actualizar número del botón
+            const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+            cartCount.textContent = totalItems;
+
+            // Limpiar la lista previa
+            listaCarrito.innerHTML = '';
+
+            if (carrito.length === 0) {
+                listaCarrito.innerHTML = '<p class="has-text-centered">El carrito está vacío.</p>';
+                cartTotal.textContent = '0.00';
+                return;
+            }
+
+            let total = 0;
+
+            // Construir los elementos en el HTML
+            carrito.forEach((item, index) => {
+                const subtotal = item.precio * item.cantidad;
+                total += subtotal;
+
+                const divItem = document.createElement('div');
+                divItem.classList.add('level', 'mb-2');
+                divItem.innerHTML = `
+                    <div class="level-left">
+                        <div>
+                            <strong>${item.nombre}</strong><br>
+                            <small>$${item.precio.toFixed(2)} x ${item.cantidad}</small>
+                        </div>
+                    </div>
+                    <div class="level-right">
+                        <span class="has-text-weight-bold mr-3">$${subtotal.toFixed(2)}</span>
+                        <button class="button is-small is-danger btn-eliminar" data-index="${index}">X</button>
+                    </div>
+                `;
+                listaCarrito.appendChild(divItem);
+            });
+
+            cartTotal.textContent = total.toFixed(2);
+
+            // Escuchar clics en los botones "X" para eliminar un ítem
+            document.querySelectorAll('.btn-eliminar').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const idx = e.target.getAttribute('data-index');
+                    carrito.splice(idx, 1); // Elimina 1 elemento del array
+                    actualizarCarritoUI();
+                });
             });
         }
+
+        // Detectar clic en botones "Añadir al carrito"
+        document.querySelectorAll('.btn-add-cart').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const nombre = btn.getAttribute('data-nombre');
+                const precio = parseFloat(btn.getAttribute('data-precio'));
+
+                // Verificar si el producto ya está en el carrito
+                const existe = carrito.find(item => item.nombre === nombre);
+                if (existe) {
+                    existe.cantidad += 1;
+                } else {
+                    carrito.push({ nombre, precio, cantidad: 1 });
+                }
+
+                actualizarCarritoUI();
+                alert(`¡${nombre} añadido al carrito!`);
+            });
+        });
+
+        // Abrir Modal
+        btnVerCarrito.addEventListener('click', () => {
+            modalCarrito.classList.add('is-active');
+        });
+
+        // Cerrar Modal
+        btnCerrarModal.addEventListener('click', () => {
+            modalCarrito.classList.remove('is-active');
+        });
+
+        // Vaciar Carrito
+        btnVaciar.addEventListener('click', () => {
+            carrito = [];
+            actualizarCarritoUI();
+        });
+
+        // Finalizar Compra
+        btnComprar.addEventListener('click', () => {
+            if (carrito.length === 0) {
+                alert('El carrito está vacío.');
+                return;
+            }
+            alert('¡Gracias por tu compra! Tu pedido ha sido procesado.');
+            carrito = [];
+            actualizarCarritoUI();
+            modalCarrito.classList.remove('is-active');
+        });
+
+        // Render inicial al cargar la página
+        actualizarCarritoUI();
     }
 });
