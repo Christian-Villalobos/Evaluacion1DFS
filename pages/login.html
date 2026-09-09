@@ -1,74 +1,85 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio de Sesión</title>
-    <!-- Acordarse de verificar las rutas correctamente '../' -->
-    <link rel="stylesheet" href="../styles/bulma.css">
-    <link rel="stylesheet" href="../styles/estilos.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicio de Sesión</title>
+  <link rel="stylesheet" href="../styles/bulma.css">
+  <link rel="stylesheet" href="../styles/estilos.css">
 </head>
 
 <body>
+  <header class="section has-background-dark">
+    <div class="is-right mb-4">
+      <a href="../index.html">
+        <figure class="image is-128x128 is-inline-block">
+          <img src="../images/Path-of-Exile-Logo.webp" alt="Path of Exile Logo">
+        </figure>
+      </a>
+    </div>
 
-    <header class="section has-background-dark">
-        <!-- Enlace que envuelve a la imagen para ir al inicio -->
-        <div class="is-right mb-4">
-            <a href="../index.html">
-                <figure class="image is-128x128 is-inline-block">
-                    <img src="../images/Path-of-Exile-Logo.webp" alt="Path of Exile Logo">
-                </figure>
-            </a>
-        </div>
-        <h1 class="title has-text-warning has-text-centered">
-            PATH OF EXILE CURRENCY
-        </h1>
-    </header>
+    <h1 class="title has-text-warning has-text-centered">
+      PATH OF EXILE CURRENCY
+    </h1>
+  </header>
 
-    <main class="container mt-6">
-        <div class="columns is-centered">
-            <div class="column is-one-third">
-                <!-- 'box' sirve para dar un fondo, sombra y borde redondeado ideal para formularios de login -->
-                <form id="formLogin" class="box" novalidate>
-                    <div class="field">
-                        <label class="label" for="loginEmail">Correo Electrónico</label>
-                        <div class="control">
-                            <input class="input" type="email" id="loginEmail" name="email"
-                                placeholder="Ingrese su correo electrónico" autocomplete="email">
-                        </div>
-                        <p class="help is-danger is-hidden" id="err-login-email">
-                            Ingrese un formato de correo electrónico válido.
-                        </p>
-                    </div>
-                    <div class="field">
-                        <label class="label" for="loginPassword">Contraseña</label>
-                        <div class="control">
-                            <input class="input" type="password" id="loginPassword" name="password"
-                                placeholder="Ingrese su contraseña" autocomplete="current-password">
-                        </div>
-                        <p class="help is-danger is-hidden" id="err-login-password">
-                            La contraseña no puede estar vacía y debe tener al menos 6 caracteres.
-                        </p>
-                    </div>
-                    <div class="field is-grouped is-grouped-centered mt-4">
-                        <div class="control">
-                            <button type="submit" class="button is-primary">Iniciar Sesión</button>
-                        </div>
-                    </div>
-                </form>
-
+  <main class="container mt-6">
+    <div class="columns is-centered">
+      <div class="column is-one-third">
+        <!-- CAMBIO: formulario de inicio de sesión con los ids que usa el JS. -->
+        <!-- Función: validar y autenticar usuario desde localStorage. -->
+        <form id="formLogin" class="box" novalidate>
+          <div class="field">
+            <label class="label" for="loginEmail">Correo Electrónico</label>
+            <div class="control">
+              <input
+                id="loginEmail"
+                class="input"
+                type="email"
+                placeholder="correo@ejemplo.com"
+                required
+              >
             </div>
-        </div>
-    </main>
+            <p class="help is-danger is-hidden" id="err-login-email">
+              Ingresa un correo válido.
+            </p>
+          </div>
 
-    <footer class="footer mt-6 has-background-dark">
-        <div class="content has-text-centered">
-            <p>&copy; 2024 Path of Exile Currency. Todos los derechos reservados.</p>
-        </div>
-    </footer>
+          <div class="field">
+            <label class="label" for="loginPassword">Contraseña</label>
+            <div class="control">
+              <input
+                id="loginPassword"
+                class="input"
+                type="password"
+                placeholder="Tu contraseña"
+                required
+              >
+            </div>
+            <p class="help is-danger is-hidden" id="err-login-password">
+              La contraseña debe tener al menos 6 caracteres.
+            </p>
+          </div>
 
-    <script src="../scripts/scripts.js"></script>
+          <div class="field is-grouped is-grouped-centered mt-4">
+            <div class="control">
+              <button class="button is-primary" type="submit">Iniciar sesión</button>
+            </div>
+            <div class="control">
+              <a href="register.html" class="button is-light">Crear cuenta</a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer mt-6 has-background-dark">
+    <div class="content has-text-centered">
+      <p>&copy; 2024 Path of Exile Currency. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="../scripts/scripts.js"></script>
 </body>
-
 </html>
