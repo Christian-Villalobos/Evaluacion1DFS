@@ -24,7 +24,24 @@
     <main class="container mt-5" id="admin-content">
         <div class="box">
             <h2 class="title is-4">Bienvenido, Administrador</h2>
-            <p>Desde aquí podrás gestionar los productos de la tienda y ver usuarios registrados más adelante.</p>
+            <p class="mb-4">Desde aquí puedes visualizar a todos los usuarios registrados en el sistema.</p>
+            
+            <!-- CAMBIO: Tabla donde cargaremos dinámicamente los usuarios registrados -->
+            <div class="table-container">
+                <table class="table is-fullwidth is-striped is-hoverable">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Correo Electrónico</th>
+                            <th>Rol</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-usuarios">
+                        <!-- Las filas de usuarios se cargarán aquí desde JS -->
+                    </tbody>
+                </table>
+            </div>
+
             <div class="buttons mt-4">
                 <a href="tienda.html" class="button is-primary">Ver Tienda</a>
             </div>

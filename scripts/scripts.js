@@ -93,16 +93,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const cartCount = document.getElementById('cart-count');
         const cartTotal = document.getElementById('cart-total');
 
-        // Función para actualizar la vista del carrito
         function actualizarCarritoUI() {
-            // Guardar en localStorage
             localStorage.setItem(CART_KEY, JSON.stringify(carrito));
 
-            // Actualizar número del botón
             const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
             cartCount.textContent = totalItems;
 
-            // Limpiar la lista previa
             listaCarrito.innerHTML = '';
 
             if (carrito.length === 0) {
@@ -113,7 +109,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let total = 0;
 
-            // Construir los elementos en el HTML
             carrito.forEach((item, index) => {
                 const subtotal = item.precio * item.cantidad;
                 total += subtotal;
@@ -137,23 +132,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
             cartTotal.textContent = total.toFixed(2);
 
-            // Escuchar clics en los botones "X" para eliminar un ítem
             document.querySelectorAll('.btn-eliminar').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const idx = e.target.getAttribute('data-index');
-                    carrito.splice(idx, 1); // Elimina 1 elemento del array
+                    carrito.splice(idx, 1);
                     actualizarCarritoUI();
                 });
             });
         }
 
-        // Detectar clic en botones "Añadir al carrito"
         document.querySelectorAll('.btn-add-cart').forEach(btn => {
             btn.addEventListener('click', () => {
                 const nombre = btn.getAttribute('data-nombre');
                 const precio = parseFloat(btn.getAttribute('data-precio'));
 
-                // Verificar si el producto ya está en el carrito
                 const existe = carrito.find(item => item.nombre === nombre);
                 if (existe) {
                     existe.cantidad += 1;
@@ -166,23 +158,19 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Abrir Modal
         btnVerCarrito.addEventListener('click', () => {
             modalCarrito.classList.add('is-active');
         });
 
-        // Cerrar Modal
         btnCerrarModal.addEventListener('click', () => {
             modalCarrito.classList.remove('is-active');
         });
 
-        // Vaciar Carrito
         btnVaciar.addEventListener('click', () => {
             carrito = [];
             actualizarCarritoUI();
         });
 
-        // Finalizar Compra
         btnComprar.addEventListener('click', () => {
             if (carrito.length === 0) {
                 alert('El carrito está vacío.');
@@ -194,7 +182,39 @@ document.addEventListener('DOMContentLoaded', () => {
             modalCarrito.classList.remove('is-active');
         });
 
-        // Render inicial al cargar la página
         actualizarCarritoUI();
+    }
+
+    // --- 5. PANEL DE ADMINISTRADOR (admin.html) ---
+    const tablaUsuarios = document.getElementById('tabla-usuarios');
+    if (tablaUsuarios) {
+        const currentUser = JSON.parse(localStorage.getItem("poe_current_user"));
+
+        // Protección de la ruta: Solo permite el acceso a usuarios con rol 'admin'
+        if (!currentUser || currentUser.role !== 'admin') {
+            alert('Acceso restringido solo para administradores.');
+            window.location.href = 'login.html';
+            return;
+        }
+
+        // CAMBIO: Recorrer el arreglo de usuarios y dibujarlos dentro de la tabla
+        users.forEach(user => {
+            const fila = document.createElement('tr');
+            fila.innerHTML = `
+                <td><strong>${user.name}</strong></td>
+                <td>${user.email}</td>
+                <td><span class="tag ${user.role === 'admin' ? 'is-danger' : 'is-info'}">${user.role}</span></td>
+            `;
+            tablaUsuarios.appendChild(fila);
+        });
+
+        // Botón para cerrar sesión desde el panel de Admin
+        const logoutAdmin = document.getElementById('logout-admin');
+        if (logoutAdmin) {
+            logoutAdmin.addEventListener('click', () => {
+                localStorage.removeItem("poe_current_user");
+                window.location.href = 'login.html';
+            });
+        }
     }
 });
